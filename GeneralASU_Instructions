@@ -1,0 +1,22 @@
+https://fpsluozi.github.io/Linux-Setup/
+
+General.asu LINUX Setup
+Below are the tool bundles for coding on ASU’s remote Linux server.
+
+Your OS	Command Line	File Transfer	Text Editor
+Windows	PuTTY	WinSCP	VS Code / Sublime Text
+MacOS	Terminal / iTerm	Cyberduck	VS Code / Sublime Text
+Linux (Hardcore)	Terminal	scp	vi / emacs
+Additional notes
+Hostname is general.asu.edu . Username/passowrd is the same with your ASU username/password. ssh yourasuusername@general.asu.edu
+
+Choose SFTP as the connection protocol on WinSCP/Cyberduck.
+
+In the preferences of WinSCP/Cyberduck, you may select your favorite text editor as default to open *.* files. By doing so, you now can edit and synchronize your code files while working on them locally.
+
+Never forget to refer to gcc/make Tutorial / Makefile Tutorial if you struggle with compiling.
+
+Or email me if you have any more concerns.
+
+Written on February 1, 2018
+  
