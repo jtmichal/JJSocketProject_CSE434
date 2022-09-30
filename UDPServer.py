@@ -1,5 +1,5 @@
 from socket import *
-HOST = "general.asu.edu"
+HOST = "10.120.70.145"
 serverPort = 6001
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind((HOST, serverPort))
