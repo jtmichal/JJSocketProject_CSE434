@@ -1,6 +1,6 @@
 from socket import *
 HOST = "127.0.0.1"
-serverPort = 12000
+serverPort = 6001
 serverSocket = socket(AF_INET, SOCK_DGRAM)
 serverSocket.bind((HOST, serverPort))
 print("The server is ready to receive")
