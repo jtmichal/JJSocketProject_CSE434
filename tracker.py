@@ -97,7 +97,6 @@ while True:
     elif(split_message[0] == "exit"):
         modifiedMessage = split_message[0]
         trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
-        exit()
         
     else: exit()
 
