@@ -5,30 +5,34 @@ trackerSocket = socket(AF_INET, SOCK_DGRAM)
 trackerSocket.bind((HOST, trackerPort))
 handle_list = []
 follower_list = []
+split_message = []
 
-def capitalize(msg):
-    cap_msg = msg.decode().upper()
-    return cap_msg
-
+#Function checks if a handle has been used, checks if it's less than 15 characters, then registers it for use.
 def register(handle, HOST, trackerPort) -> str:
-    msg = handle.decode()
+    msg = handle
     info = None
     if len(msg)<15:
         for x in handle_list:
-            if x == msg:
+            if x[0] == msg[0]:
                 print("This handle is already taken.")
                 info = "Failed"
                 return info
-        handle_list.append(msg)
+        handle_list.append((msg, HOST, trackerPort))
         info = "Success"
         return info
 
+#Function grabs all handles that have been registered along with the count in a string list object
 def getHandles() -> str:
+    temp_list = []
     list = handle_list
+    for x in list:
+        temp_list.append(x[0])
     count = len(list)
-    ans = ' '.join(list)
-    return ans
+    ans = ' '.join(temp_list)
+    returned_str = str(count) + "\n" + ans
+    return returned_str
 
+#Function takes the follower and adds it to followee's list of followers if the user exists and if the follower doesn't exist already
 def follow(follower, followee) -> str:
     for x in follower_list:
         if x == follower:
@@ -40,6 +44,7 @@ def follow(follower, followee) -> str:
     info = "Success"
     return info
 
+#Function takes follower and removes it from followee's follower list. Only if follower already exists. Opposite of follow.
 def drop(follower, followee) -> str:
     for x in follower_list:
         if x == follower:
@@ -54,14 +59,20 @@ def drop(follower, followee) -> str:
 
 
 print("The server is ready to receive")
+#permanent while loop until Exit() when a bad input is detected.
 while True:
     message, clientAddress = trackerSocket.recvfrom(2048)
-    modifiedMessage = register(message, "0.0.0.0", trackerPort)
-    trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
-
-    message, clientAddress = trackerSocket.recvfrom(2048)
-    modifiedMessage = getHandles()
-    trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+    split_message = message.decode().split(' ')
+    
+    if (split_message[0] == "register"):
+        modifiedMessage = register(split_message[1], "0.0.0.0", trackerPort)
+        trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+    
+    elif (split_message[0] == "query"):
+        modifiedMessage = getHandles()
+        trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+        
+    else: exit()
 
     
 
