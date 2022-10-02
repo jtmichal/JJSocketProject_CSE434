@@ -24,8 +24,8 @@ def register(handle, HOST, trackerPort) -> str:
         return info
 
 def getHandles() -> str:
-    count = list.len()
     list = handle_list
+    count = len(list)
     ans = ' '.join(list)
     return ans
 
@@ -58,6 +58,12 @@ while True:
     message, clientAddress = trackerSocket.recvfrom(2048)
     modifiedMessage = register(message, "0.0.0.0", trackerPort)
     trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+
+    message, clientAddress = trackerSocket.recvfrom(2048)
+    modifiedMessage = getHandles()
+    trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+
+    
 
 
  

@@ -12,4 +12,10 @@ clientSocket.sendto(message.encode(),(trackerName, trackerPort))
 modifiedMessage, trackerAddress = clientSocket.recvfrom(2048)
 #now convert from bytes to string again
 print(modifiedMessage.decode())
+
+message = input("What's next?")
+clientSocket.sendto(message.encode(), (trackerName, trackerPort))
+modifiedMessage, trackerAddress = clientSocket.recvfrom(2048)
+print(modifiedMessage.decode())
+
 clientSocket.close()
