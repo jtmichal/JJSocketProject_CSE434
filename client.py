@@ -19,6 +19,7 @@ while True:
     modifiedMessage, trackerAddress = clientSocket.recvfrom(2048)
     #now convert from bytes to string again
     print(modifiedMessage.decode())
+    if (modifiedMessage.decode() == "exit"):
+        clientSocket.close()
+        exit()
 
-
-clientSocket.close()
