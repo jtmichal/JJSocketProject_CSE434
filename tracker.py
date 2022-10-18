@@ -1,4 +1,5 @@
 from socket import *
+import user
 HOST = "192.168.1.10"
 trackerPort = 6001
 trackerSocket = socket(AF_INET, SOCK_DGRAM)
@@ -10,16 +11,16 @@ split_message = []
 #Function checks if a handle has been used, checks if it's less than 15 characters, then registers it for use.
 def register(handle, HOST, trackerPort) -> str:
     print("Beginning register(handle, HOST, trackerPort) process")
-    msg = handle
+    username = handle
     info = "Failed"
-    if len(msg)<15:
+    if len(username)<15:
         for x in handle_list:
-            if x[0] == msg[0]:
+            if x[0] == username[0]:
                 print("This handle is already taken.")
                 info = "Failed"
                 print("Ending process")
                 return info
-        handle_list.append((msg, HOST, trackerPort))
+        handle_list.append((username, HOST, trackerPort))
         info = "Success"
         print("Ending process")
         return info
@@ -68,6 +69,13 @@ def drop(follower, followee) -> str:
     info = "Failure"
     print("Ending process")
     return info
+
+def tweet(handle) -> str:
+    return
+
+def end_tweet(handle) -> str:
+    return
+
 
 
 
