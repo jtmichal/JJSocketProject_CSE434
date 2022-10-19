@@ -1,5 +1,5 @@
 from socket import *
-HOST = "192.168.1.10"
+HOST = "192.168.1.27"
 trackerName = HOST
 trackerPort = 6001
 clientSocket = socket(AF_INET, SOCK_DGRAM)

@@ -1,6 +1,6 @@
 from socket import *
-import user
-HOST = "192.168.1.10"
+from user import User
+HOST = "192.168.1.27"
 trackerPort = 6001
 trackerSocket = socket(AF_INET, SOCK_DGRAM)
 trackerSocket.bind((HOST, trackerPort))
@@ -11,16 +11,18 @@ split_message = []
 #Function checks if a handle has been used, checks if it's less than 15 characters, then registers it for use.
 def register(handle, HOST, trackerPort) -> str:
     print("Beginning register(handle, HOST, trackerPort) process")
+    follower_list = []
     username = handle
     info = "Failed"
     if len(username)<15:
         for x in handle_list:
-            if x[0] == username[0]:
+            if x.handle == username:
                 print("This handle is already taken.")
                 info = "Failed"
                 print("Ending process")
                 return info
-        handle_list.append((username, HOST, trackerPort))
+        user_object = User(username, HOST, trackerPort, follower_list)
+        handle_list.append(user_object)
         info = "Success"
         print("Ending process")
         return info
@@ -34,7 +36,7 @@ def getHandles() -> str:
     temp_list = []
     list = handle_list
     for x in list:
-        temp_list.append(x[0])
+        temp_list.append(x.handle)
     count = len(list)
     ans = ' '.join(temp_list)
     returned_str = str(count) + "\n" + ans
@@ -44,27 +46,56 @@ def getHandles() -> str:
 #Function takes the follower and adds it to followee's list of followers if the user exists and if the follower doesn't exist already
 def follow(follower, followee) -> str:
     print("Beginning follow(follower, followee) process")
-    for x in follower_list:
-        if x == follower:
-            print("You're already following this user.")
-            print("Ending process")
-            info = "Failed"
-            return info
-    follower_list.append(follower)
-    follower_list.sort()
+    temp_user = []
+    list = handle_list
+    for x in list:
+        if followee == x.handle:
+            for y in x.followers:
+                if y == follower:
+                    print("You're already following this user.")
+                    print("Ending process")
+                    info = "Failed"
+                    return info
+            temp_user = x.followers
+            x.followers.append(follower)
+            x.followers.sort()
+    
+    # for x in followee.followers:
+    #     if x == follower:
+    #         print("You're already following this user.")
+    #         print("Ending process")
+    #         info = "Failed"
+    #         return info
+    # followee.followers.append(follower)
+    # followee.followers.sort()
+
     info = "Success"
+    print(followee + "\'s updated follower list is: " + ' '.join(temp_user))
     print("Ending process")
     return info
 
 #Function takes follower and removes it from followee's follower list. Only if follower already exists. Opposite of follow.
 def drop(follower, followee) -> str:
     print("Beginning drop(follower, followee) process")
-    for x in follower_list:
-        if x == follower:
-            follower_list.remove(follower)
-            info = "Success"
-            print("Ending process")
-            return info
+    
+    list = handle_list
+    for x in list:
+        if followee == x.handle:
+            for y in x.followers:
+                if y == follower:
+                    x.followers.remove(follower)
+                    info = "Success"
+                    print("Ending process")
+                    return info
+    
+    
+    # for x in follower_list:
+    #     if x == follower:
+    #         follower_list.remove(follower)
+    #         info = "Success"
+    #         print("Ending process")
+    #         return info
+
     print("You don't follow this user")
     info = "Failure"
     print("Ending process")
