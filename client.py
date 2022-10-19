@@ -19,6 +19,7 @@ while True:
     modifiedMessage, trackerAddress = clientSocket.recvfrom(2048)
     #now convert from bytes to string again
     print(modifiedMessage.decode())
+    #GONNA NEED TO SEND STUFF TO EACH USER THAT TWEETS THIS STUFFERINO USING THE TABLE
     if (modifiedMessage.decode() == "exit"):
         clientSocket.close()
         exit()

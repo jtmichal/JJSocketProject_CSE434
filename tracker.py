@@ -7,6 +7,7 @@ trackerSocket.bind((HOST, trackerPort))
 handle_list = []
 follower_list = []
 split_message = []
+full_information = [] #list of tuples sent back from TWEET
 
 #Function checks if a handle has been used, checks if it's less than 15 characters, then registers it for use.
 def register(handle, HOST, trackerPort) -> str:
@@ -79,12 +80,15 @@ def drop(follower, followee) -> str:
     print("Beginning drop(follower, followee) process")
     
     list = handle_list
+    temp_user = []
     for x in list:
         if followee == x.handle:
             for y in x.followers:
                 if y == follower:
+                    temp_user = x.followers
                     x.followers.remove(follower)
                     info = "Success"
+                    print(followee + "\'s updated follower list is: " + ' '.join(temp_user))
                     print("Ending process")
                     return info
     
@@ -101,11 +105,32 @@ def drop(follower, followee) -> str:
     print("Ending process")
     return info
 
-def tweet(handle) -> str:
-    return
+def tweet(handle, message) -> str:
+    print("Beginning tweet(handle, message) process")
+    if (len(message) <= 140):
+        user_follower_list = []
+        list = handle_list
+        for x in list:
+            if handle == x.handle:
+                count = len(x.followers)
+                user_follower_list = x.followers
+                for y in user_follower_list:
+                    for z in list:
+                        if (y == z.handle):
+                            full_information.append([z.handle, z.HOST, z.trackerPort])
+                print("The number of followers " + handle + " currently has is: " + str(count) + "\n" + "The follower list is:\n")
+                print(full_information)
+                info = "Success"
+                print("Ending process")
+        return info
+    else:
+        info = "Failure"
+        print("Ending process")
+    return info
 
 def end_tweet(handle) -> str:
-    return
+    info = "Success"
+    return info
 
 
 
@@ -133,8 +158,16 @@ while True:
         modifiedMessage = drop(split_message[1], split_message[2])
         trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
     
+    elif(split_message[0] == "tweet"):
+        handle = split_message[1]
+        del split_message[0:2]
+        final_message = ' '.join(split_message)
+        modifiedMessage = tweet(handle, split_message)
+        trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+        #DO ALL THE LOGICAL RING STUFF
+    
     elif(split_message[0] == "exit"):
-        modifiedMessage = split_message[0]
+        modifiedMessage = split_message
         trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
         
     else: exit()
