@@ -8,10 +8,12 @@ handle_list = []
 follower_list = []
 split_message = []
 full_information = [] #list of tuples sent back from TWEET
+clientPorts = []
+clientIPs = []
 
 #Function checks if a handle has been used, checks if it's less than 15 characters, then registers it for use.
-def register(handle, HOST, trackerPort) -> str:
-    print("Beginning register(handle, HOST, trackerPort) process")
+def register(handle, IP, clientPort) -> str:
+    print("Beginning register(handle, IP, clientPort) process")
     follower_list = []
     username = handle
     info = "Failed"
@@ -22,7 +24,7 @@ def register(handle, HOST, trackerPort) -> str:
                 info = "Failed"
                 print("Ending process")
                 return info
-        user_object = User(username, HOST, trackerPort, follower_list)
+        user_object = User(username, IP, clientPort, follower_list)
         handle_list.append(user_object)
         info = "Success"
         print("Ending process")
@@ -87,6 +89,7 @@ def drop(follower, followee) -> str:
                 if y == follower:
                     temp_user = x.followers
                     x.followers.remove(follower)
+                    x.followers.sort()
                     info = "Success"
                     print(followee + "\'s updated follower list is: " + ' '.join(temp_user))
                     print("Ending process")
@@ -142,8 +145,16 @@ while True:
     message, clientAddress = trackerSocket.recvfrom(2048)
     split_message = message.decode().split(' ')
     
-    if (split_message[0] == "register"):
-        modifiedMessage = register(split_message[1], "0.0.0.0", trackerPort)
+    if (split_message[0] == "Initial"):
+        clientIPs.append(split_message[1])
+        clientPorts.append(split_message[2])
+        modifiedMessage = "Host detected"
+        trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+
+    elif (split_message[0] == "register"):
+        modifiedMessage = register(split_message[1], clientIPs[0], clientPorts[0])
+        clientIPs.remove(clientIPs[0])
+        clientPorts.remove(clientPorts[0])
         trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
     
     elif (split_message[0] == "query"):
