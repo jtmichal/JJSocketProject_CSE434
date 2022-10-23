@@ -10,6 +10,8 @@ split_message = []
 full_information = [] #list of tuples sent back from TWEET
 clientPorts = []
 clientIPs = []
+final_message = ''
+clientAddresses = []
 
 #Function checks if a handle has been used, checks if it's less than 15 characters, then registers it for use.
 def register(handle, IP, clientPort) -> str:
@@ -120,12 +122,12 @@ def tweet(handle, message) -> str:
                 for y in user_follower_list:
                     for z in list:
                         if (y == z.handle):
-                            full_information.append([z.handle, z.HOST, z.trackerPort])
+                            full_information.append([z.handle, z.IP, z.clientPort])
                 print("The number of followers " + handle + " currently has is: " + str(count) + "\n" + "The follower list is:\n")
                 print(full_information)
                 info = "Success"
                 print("Ending process")
-        return info
+                return info
     else:
         info = "Failure"
         print("Ending process")
@@ -143,6 +145,7 @@ print("The server is ready to receive")
 #permanent while loop until Exit() when a bad input is detected.
 while True:
     message, clientAddress = trackerSocket.recvfrom(2048)
+    clientAddresses.append(clientAddress)
     split_message = message.decode().split(' ')
     
     if (split_message[0] == "Initial"):
@@ -174,11 +177,51 @@ while True:
         del split_message[0:2]
         final_message = ' '.join(split_message)
         modifiedMessage = tweet(handle, split_message)
+        modifiedMessage = "tweet " + modifiedMessage
         trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+
         #DO ALL THE LOGICAL RING STUFF
     
+    elif(split_message[0] == "propagate"):
+        print("Beginning propagation")
+        end = end_tweet('jacob')
+        modifiedMessage = "Tweet Propagated - " + end
+        trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+
+        
+        user_follower_list = []
+        list = handle_list
+        for x in list:
+            if handle == x.handle:
+                count = len(x.followers)
+                user_follower_list = x.followers
+                for y in user_follower_list:
+                    for z in list:
+                        if (y == z.handle):
+                            clientAddress = ('192.168.1.27', int(z.clientPort))
+                            index = full_information.index([z.handle, z.IP, z.clientPort])
+                            if index == 0:
+                                modifiedMessage = "Previous Hop Neighbor: " + x.handle + "\nTweet: " + final_message
+                                trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+                            else: 
+                                modifiedMessage = "Previous Hop Neighbor: " + user_follower_list[index-1] + "\nTweet: " + final_message
+                                trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+                
+                print("Ending process")
+
+    elif(split_message[0] == "listen"):
+        modifiedMessage = split_message[0]
+        trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
+    
     elif(split_message[0] == "exit"):
-        modifiedMessage = split_message
+        handle_close = split_message[1]
+        for x in handle_list:
+            for y in x.followers:
+                if handle_close == y:
+                    x.followers.remove(handle_close)
+            if handle_close == x.handle:
+                handle_list.remove(x)
+        modifiedMessage = split_message[0]
         trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
         
     else: exit()

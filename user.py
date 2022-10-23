@@ -1,6 +1,6 @@
 class User:
-    def __init__(self, handle, HOST, trackerPort, followers = []):
+    def __init__(self, handle, IP, clientPort, followers = []):
         self.handle = handle
-        self.HOST = HOST
-        self.trackerPort = trackerPort
+        self.IP = IP
+        self.clientPort = clientPort
         self.followers = followers
