@@ -206,7 +206,7 @@ while True:
                             else: 
                                 modifiedMessage = "Previous Hop Neighbor: " + user_follower_list[index-1] + "\nTweet: " + final_message
                                 trackerSocket.sendto(modifiedMessage.encode(), clientAddress)
-                
+                full_information = []
                 print("Ending process")
 
     elif(split_message[0] == "listen"):

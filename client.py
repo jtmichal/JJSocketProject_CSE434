@@ -32,6 +32,8 @@ print(modifiedMessage.decode())
 while True:
     #wait for input
     message = input("Input function:")
+    if listenTest > 0:
+        listenTest = 0
     #now convert from String to bytes
     clientSocket.sendto(message.encode(),(trackerName, trackerPort))
     #wait for response from tracker
